@@ -1,0 +1,4 @@
+processed_data/stan_output_GP.rds filter=lfs diff=lfs merge=lfs -text
+processed_data/stan_output_R.rds filter=lfs diff=lfs merge=lfs -text
+*.gz filter=lfs diff=lfs merge=lfs -text
+sequencing_data/ref_fasta/ref_db.fasta filter=lfs diff=lfs merge=lfs -text
