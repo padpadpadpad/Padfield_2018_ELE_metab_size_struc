@@ -1,6 +1,6 @@
 # Analyses of metabolism, temperature and size distributions as published in:
 
-_Padfield et al. (2018) Linking phytoplankton community metabolism to the individual size distribution. Ecology Letters_
+_Padfield et al. (2018) Linking phytoplankton community metabolism to the individual size distribution. Ecology Letters_ [doi: 10.1111/ele.13082](https://onlinelibrary.wiley.com/doi/full/10.1111/ele.13082)
 
 ### Outline
 
