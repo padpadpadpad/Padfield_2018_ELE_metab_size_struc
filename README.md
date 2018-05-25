@@ -2,6 +2,8 @@
 
 _Padfield et al. (2018) Linking phytoplankton community metabolism to the individual size distribution. Ecology Letters_ [doi: 10.1111/ele.13082](https://onlinelibrary.wiley.com/doi/full/10.1111/ele.13082)
 
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.1252775.svg)](https://zenodo.org/record/1252775#.WwfLBi_MxBw)
+
 ### Outline
 
 This repository contains the final datasets, analyses and figures of the above-mentioned paper. It can recreate the all of the analyses and figures in the main text (Figure 1 to Figure 4).
