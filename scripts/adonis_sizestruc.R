@@ -94,3 +94,28 @@ figure_1 <- gridExtra::grid.arrange(plot_ord + ggtitle('(a) Bray-Curtis dissimil
                                     plot_size_dist + ggtitle('(b) size distribution') + theme(legend.position = 'none'),
                                     ncol = 2)
 ggsave('plots/Figure_1.pdf', figure_1, width = 10, height = 5)
+ggsave('plots/Figure_1.png', figure_1, width = 10, height = 5)
+
+plot_ord <- plot_ordination(ps_aut, ord1, color="ancestral", shape = 'treatment') +
+  geom_point(size = 4) +
+  scale_color_manual('Ancestral', values = c('black', 'red'), labels = c('Cold pond', 'Warm pond')) +
+  scale_fill_manual('Ancestral', values = c('black', 'red'), labels = c('Cold pond', 'Warm pond')) +
+  scale_shape_discrete('Treatment', labels = c('Ambient Incubator', 'Warm Incubator')) +
+  stat_ellipse(aes(col = ancestral, group = ancestral), geom = 'path', type = "t", size = 1.3) +
+  theme_bw(base_size = 30, base_family = 'Helvetica') +
+  ylab('PCoA2 [12.7%]') +
+  xlab('PCoA1 [57.8%]') +
+  theme(legend.position = 'none')
+
+plot_size_dist <- ggplot(cd_counts) +
+  geom_line(aes(log10(carbon), group = id, col = ancestral), alpha = 0.1, stat = 'density', size = 1.2) +
+  geom_line(aes(log10(carbon), col = ancestral), stat = 'density', size = 1.5) +
+  xlab(expression(log[10]~Organism~mass)) +
+  ylab(expression(Density)) +
+  theme_bw(base_size = 40, base_family = 'Helvetica') +
+  theme(strip.text = element_text(hjust = 0, size = 14),
+        strip.background = element_blank()) +
+  scale_color_manual(values = c('black', 'red'))
+
+ggsave('plots/Figure_size_dist_poster.pdf', plot_size_dist + theme(legend.position = 'none'), width = 9, height = 8)
+ggsave('plots/Figure_PCoA_poster.pdf', plot_ord + theme(legend.position = 'none'), width = 9, height = 8)

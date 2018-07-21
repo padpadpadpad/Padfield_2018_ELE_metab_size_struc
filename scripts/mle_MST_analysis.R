@@ -61,7 +61,7 @@ MuMIn::AICc(R_fit,
 P_plot_raw <- ggplot(d_rates, aes(treatment, ln_GP, fill = ancestral, col = ancestral)) +
   geom_boxplot(aes(fill = ancestral, col = ancestral), outlier.shape = NA, width = 0.5, position = position_dodge(width = 0.6)) +
   stat_summary(position = position_dodge(width = 0.6), geom = 'crossbar', fatten = 0, color = 'white', width = 0.45, fun.data = function(x){return(c(y=median(x), ymin=median(x), ymax=median(x)))}) +
-  geom_point(aes(treatment, ln_GP, col = ancestral), shape = 21, fill ='white', position = position_jitterdodge(dodge.width = 0.6, jitter.width = 0.2), size = 1.5) +
+  geom_point(aes(treatment, ln_GP, col = ancestral), shape = 21, fill ='white', position = position_jitterdodge(dodge.width = 0.6, jitter.width = 0.2), size = 2) +
   theme_bw(base_size = 12, base_family = 'Helvetica') +
   scale_color_manual(values = c('black', 'red')) +
   scale_fill_manual(values = c('black', 'red')) +
@@ -74,7 +74,7 @@ P_plot_raw <- ggplot(d_rates, aes(treatment, ln_GP, fill = ancestral, col = ance
 R_plot_raw <- ggplot(d_rates, aes(treatment, ln_R, fill = ancestral, col = ancestral)) +
   geom_boxplot(aes(fill = ancestral, col = ancestral), outlier.shape = NA, width = 0.5, position = position_dodge(width = 0.6)) +
   stat_summary(position = position_dodge(width = 0.6), geom = 'crossbar', fatten = 0, color = 'white', width = 0.45, fun.data = function(x){return(c(y=median(x), ymin=median(x), ymax=median(x)))}) +
-  geom_point(aes(treatment, ln_R, col = ancestral), shape = 21, fill ='white', position = position_jitterdodge(dodge.width = 0.6, jitter.width = 0.2), size = 1.5) +
+  geom_point(aes(treatment, ln_R, col = ancestral), shape = 21, fill ='white', position = position_jitterdodge(dodge.width = 0.6, jitter.width = 0.2), size = 2) +
   theme_bw(base_size = 12, base_family = 'Helvetica') +
   scale_color_manual(values = c('black', 'red')) +
   scale_fill_manual(values = c('black', 'red')) +
@@ -87,6 +87,8 @@ R_plot_raw <- ggplot(d_rates, aes(treatment, ln_R, fill = ancestral, col = ances
 raw_plot <- gridExtra::grid.arrange(P_plot_raw + theme(legend.position = 'none') + ylim(3, 7.25), R_plot_raw + theme(legend.position = 'none') + ylim(3, 7.25), ncol = 2)
 
 ggsave('plots/Figure_2.pdf', plot = raw_plot, width = 10, height = 5)
+ggsave('plots/Figure_2.png', plot = raw_plot, width = 10, height = 5)
+
 
 #------------------------------------------------------------#
 # analysis of output of MST maximum likelihood model fits ####
@@ -199,12 +201,12 @@ fit_boots <- d_GP %>%
   ungroup() %>%
   mutate(., intercept = map_dbl(fit, ~coef(.x)[1]),
          slope = map_dbl(fit, ~coef(.x)[2])) %>%
-  select(., -fit) %>%
+  dplyr::select(., -fit) %>%
   group_by(boot_num) %>%
   do(data.frame(fitted = .$intercept + .$slope*boot_preds$ln_Mtot_cor_GP, 
                 ln_Mtot_cor_GP = boot_preds$ln_Mtot_cor_GP)) %>%
   ungroup() %>%
-  group_by(., ln_Mtot_cor_GP) %>%
+  dplyr::group_by(., ln_Mtot_cor_GP) %>%
   dplyr::summarise(., conf_low = quantile(fitted, 0.025),
                    conf_high = quantile(fitted, 0.975)) %>%
   ungroup()
@@ -281,3 +283,47 @@ R_plot <- ggplot(d_R) +
 # arrange final plot ####
 p1 <- gridExtra::grid.arrange(GP_plot + theme(legend.position = 'none'), R_plot + theme(legend.position = 'none'), ncol = 2)
 ggsave('plots/Figure_3.pdf', plot = p1, width = 10, height = 5)
+
+# final GP plot
+GP_plot <- ggplot(d_GP) +
+  geom_segment(aes(x = 3.87, y = 3.87, xend = 6.84, yend = 6.84), linetype = 2, size = 2) +
+  geom_line(aes(ln_Mtot_cor_GP, preds), GP_preds, size = 2) +
+  geom_point(aes(ln_Mtot_cor_GP, ln_GP_cor, col = ancestral, shape = treatment), size = 4) +
+  geom_ribbon(aes(ymin = conf_low, ymax = conf_high, x = ln_Mtot_cor_GP), alpha = 0.2, fit_boots) +
+  theme_bw(base_size = 30, base_family = 'Helvetica') +
+  scale_color_manual(values = c('black', 'red'), labels = c('ambient pond', 'warm pond')) +
+  scale_fill_manual(values = c('black', 'red')) +
+  scale_shape_discrete('treatment', labels = c('ambient incubator', 'warm incubator')) +
+  ylim(3.25,7.25) +
+  xlim(3.25,7.25) +
+  xlab(expression(ln~Mass~corrected~biomass)) +
+  ylab(expression(ln~Temperature~corrected~rate, community~flux))
+
+ggsave('plots/Figure_GPP_poster.pdf', plot = GP_plot + theme(legend.position = 'none'), width = 9, height = 8)
+
+# make plot of raw metabolism data ####
+P_plot_raw <- ggplot(d_rates, aes(treatment, ln_GP, fill = ancestral, col = ancestral)) +
+  geom_boxplot(aes(fill = ancestral, col = ancestral), outlier.shape = NA, width = 0.5, position = position_dodge(width = 0.6)) +
+  stat_summary(position = position_dodge(width = 0.6), geom = 'crossbar', fatten = 0, color = 'white', width = 0.45, fun.data = function(x){return(c(y=median(x), ymin=median(x), ymax=median(x)))}) +
+  geom_point(aes(treatment, ln_GP, col = ancestral, shape = treatment), fill ='white', position = position_jitterdodge(dodge.width = 0.6, jitter.width = 0.2), size = 4) +
+  theme_bw(base_size = 30, base_family = 'Helvetica') +
+  scale_color_manual(values = c('black', 'red')) +
+  scale_fill_manual(values = c('black', 'red')) +
+  scale_shape_manual(values = c(21,24), 'treatment', labels = c('Ambient Incubator', 'Warm Incubator')) +
+  ylab(expression(ln~Gross~primary~productivity)) +
+  xlab(' ') +
+  scale_x_discrete(labels=c(expression(atop(Ambient,Incubator)), expression(atop(Warm,Incubator)))) 
+
+ggsave('plots/Figure_GPP1_poster.pdf', plot = P_plot_raw + theme(legend.position = 'none'), width = 9, height = 8)
+
+# save legend
+g_legend <- function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
+mylegend <- g_legend(GP_plot)
+library(grid)
+grid.draw(mylegend)

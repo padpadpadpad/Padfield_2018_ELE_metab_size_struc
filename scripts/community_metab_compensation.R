@@ -82,9 +82,9 @@ preds <- data.frame(expand.grid(log_Mind = seq(min(d_count_sum$log_Mind, na.rm =
 
 # make final plot #####
 ggplot() +
-  geom_point(aes(log_Mind, log_ntot, col = ancestral), d_count_sum) +
   geom_line(aes(log_Mind, preds), preds) +
-  geom_ribbon(aes(x = log_Mind, ymin = conf_low, ymax = conf_high), alpha = 0.1, fit_boots) +
+  geom_point(aes(log_Mind, log_ntot, col = ancestral), d_count_sum, size = 2) +
+  geom_ribbon(aes(x = log_Mind, ymin = conf_low, ymax = conf_high), alpha = 0.2, fit_boots) +
   scale_color_manual(values = c('black', 'red')) +
   theme_bw(base_size = 12, base_family = 'Helvetica') +
   xlab(expression(ln~Average~individual~gross~photosynthesis(µmol~O[2]~L^-1~hr^-1))) +
@@ -95,3 +95,18 @@ ggplot() +
 
 # save final plot ####
 ggsave('plots/Figure_4.pdf', plot = last_plot(), width = 6, height = 5)
+ggsave('plots/Figure_4.png', plot = last_plot(), width = 6, height = 5)
+
+ggplot() +
+  geom_line(aes(log_Mind, preds), preds, size = 2) +
+  geom_point(aes(log_Mind, log_ntot, col = ancestral, shape = treatment), d_count_sum, size = 4) +
+  geom_ribbon(aes(x = log_Mind, ymin = conf_low, ymax = conf_high), alpha = 0.2, fit_boots) +
+  scale_color_manual(values = c('black', 'red')) +
+  theme_bw(base_size = 30, base_family = 'Helvetica') +
+  xlab(expression(ln~Average~individual~gross~photosynthesis)) +
+  ylab(expression(ln~Total~community~abundance)) +
+  xlim(-13.6, -10.7) +
+  ylim(14.5, 20.5) +
+  theme(legend.position = 'none')
+
+ggsave('plots/Figure_zero_sum_poster.pdf', plot = last_plot(), width = 9, height = 8)
